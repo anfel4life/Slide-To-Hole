@@ -1,9 +1,9 @@
 package com.broodproduct.slide.objects;
 
-import java.util.Random;
-
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
+
+import java.util.Random;
 
 public class Pipe extends Scrollable {
 

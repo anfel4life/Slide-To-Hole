@@ -1,29 +1,17 @@
 package com.broodproduct.slide.render;
 
-import java.util.List;
-
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenEquations;
-import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.kilobolt.GameObjects.Bird;
-import com.kilobolt.GameObjects.Grass;
-import com.kilobolt.GameObjects.Pipe;
-import com.kilobolt.GameObjects.ScrollHandler;
-import com.kilobolt.TweenAccessors.Value;
-import com.kilobolt.TweenAccessors.ValueAccessor;
-import com.kilobolt.ZBHelpers.AssetLoader;
-import com.kilobolt.ZBHelpers.InputHandler;
-import com.kilobolt.ui.SimpleButton;
+
+import java.util.List;
 
 public class GameRenderer {
 

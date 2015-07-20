@@ -2,9 +2,10 @@ package com.broodproduct.slide.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.kilobolt.GameWorld.GameRenderer;
-import com.kilobolt.GameWorld.GameWorld;
-import com.kilobolt.ZBHelpers.InputHandler;
+import com.broodproduct.slide.render.GameRenderer;
+import com.broodproduct.slide.render.GameWorld;
+import com.broodproduct.slide.tool.InputHandler;
+
 
 public class GameScreen implements Screen {
 
@@ -12,13 +13,11 @@ public class GameScreen implements Screen {
 	private GameRenderer renderer;
 	private float runTime;
 
-	// This is the constructor, not the class declaration
 	public GameScreen() {
-
 		float screenWidth = Gdx.graphics.getWidth();
 		float screenHeight = Gdx.graphics.getHeight();
-		float gameWidth = 136;
-		float gameHeight = screenHeight / (screenWidth / gameWidth);
+		float gameHeight = 540;
+		float gameWidth = screenHeight / (screenWidth / gameHeight);
 		int midPointY = (int) (gameHeight / 2);
 
 		world = new GameWorld(midPointY);

@@ -1,13 +1,8 @@
 package com.broodproduct.slide.tool;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
-import com.kilobolt.GameObjects.Bird;
-import com.kilobolt.GameWorld.GameWorld;
-import com.kilobolt.ui.SimpleButton;
+import com.broodproduct.slide.render.GameWorld;
 
 public class InputHandler implements InputProcessor {
 	private Bird myBird;
