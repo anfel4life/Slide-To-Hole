@@ -1,0 +1,7 @@
+asteroid_80x90_f = 334 541 80 84
+black_hole_180x180 = 0 541 180 181
+left_park_540x138 = 961 0 116 540
+right_park_540x138 = 1078 0 116 540
+satelite_152x60 = 181 541 152 60
+space_background = 0 0 960 540
+ufo_100x87 = 181 602 100 87
