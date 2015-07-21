@@ -20,7 +20,7 @@ public class Ufo {
         this.height = height;
         position = new Vector2(x, y);
         velocity = new Vector2(0, 0);
-        acceleration = new Vector2(160, 0);
+        acceleration = new Vector2(16, 0);
         boundRectangle = new Rectangle();
     }
 
@@ -34,6 +34,14 @@ public class Ufo {
 
     public int getHeight() {
         return height;
+    }
+
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+
+    public Vector2 getAcceleration() {
+        return acceleration;
     }
 
     public void moveForward(){
