@@ -8,15 +8,15 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class AssetLoader {
 
 	public static Texture texture;
-	public static TextureRegion asteroid, blackHole, satelite, ufo, leftPark, rightPark, background;
+	public static TextureRegion asteroid, blackHole, satellite, ufo, leftPark, rightPark, background;
 
 	public static void load() {
-		texture = new Texture(Gdx.files.internal("imd/textures.png"));
+		texture = new Texture(Gdx.files.internal("img/textures.png"));
 		texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 
 		asteroid = new TextureRegion(texture, 334, 541, 80, 84);
 		blackHole = new TextureRegion(texture, 0, 541, 180, 181);
-		satelite = new TextureRegion(texture, 181, 541, 152, 60);
+		satellite = new TextureRegion(texture, 181, 541, 152, 60);
 		ufo = new TextureRegion(texture, 181, 602, 100, 87);
 		leftPark = new TextureRegion(texture, 961, 0, 116, 540);
 		rightPark = new TextureRegion(texture, 1078, 0, 116, 540);

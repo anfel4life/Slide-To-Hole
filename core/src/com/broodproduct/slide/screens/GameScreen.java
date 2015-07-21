@@ -8,7 +8,6 @@ import com.broodproduct.slide.tool.InputHandler;
 
 
 public class GameScreen implements Screen {
-
 	private GameWorld world;
 	private GameRenderer renderer;
 	private float runTime;
@@ -17,13 +16,12 @@ public class GameScreen implements Screen {
 		float screenWidth = Gdx.graphics.getWidth();
 		float screenHeight = Gdx.graphics.getHeight();
 		float gameHeight = 540;
-		float gameWidth = screenHeight / (screenWidth / gameHeight);
-		int midPointY = (int) (gameHeight / 2);
+		float gameWidth = 960;
+//		float gameWidth = screenHeight / (screenWidth / gameHeight);
 
-		world = new GameWorld(midPointY);
+		world = new GameWorld();
 		Gdx.input.setInputProcessor(new InputHandler(world, screenWidth / gameWidth, screenHeight / gameHeight));
-		renderer = new GameRenderer(world, (int) gameHeight, midPointY);
-		world.setRenderer(renderer);
+		renderer = new GameRenderer(world);
 	}
 
 	@Override
