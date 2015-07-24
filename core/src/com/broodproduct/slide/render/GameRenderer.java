@@ -33,12 +33,20 @@ public class GameRenderer {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batcher.begin();
         batcher.draw(AssetLoader.background, 0, 0);
+        //ufo
         batcher.draw(AssetLoader.ufo, world.getUfo().getPosition().x, world.getUfo().getPosition().y,
                 world.getUfo().getWidth(), world.getUfo().getHeight());
+        //satellite
         batcher.draw(AssetLoader.satellite, world.getSatellite().getPosition().x, world.getSatellite().getPosition().y,
                 world.getSatellite().getWidth(), world.getSatellite().getHeight());
+        //left park
+        batcher.draw(AssetLoader.leftPark, world.getLeftPark().getPosition().x, world.getLeftPark().getPosition().y);
+        batcher.draw(AssetLoader.rightPark, world.getRightPark().getPosition().x, world.getRightPark().getPosition().y);
+//        batcher.draw(AssetLoader.rightPark, world.getRightPark().getPosition().x, world.getRightPark().getPosition().y,
+//                world.getRightPark().getWidth(), world.getRightPark().getHeight());
 		font.draw(batcher, "velocity: " + world.getUfo().getVelocity(), 10, 500);
 		font.draw(batcher, "position: " + world.getUfo().getPosition(), 10, 520);
 		batcher.end();
+
 	}
 }
