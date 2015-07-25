@@ -1,42 +1,32 @@
 package com.broodproduct.slide.objects;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.World;
+import com.broodproduct.slide.tool.Utils;
 
-public class Satellite {
+public class Satellite extends BaseModel {
 
-    private int width;
-    private int height;
-
-    private Vector2 position;
-
-    public Satellite(int x, int y, int width, int height) {
-        this.width = width;
-        this.height = height;
-        this.position = new Vector2(x, y);
+    public Satellite(int x, int y, int width, int height, World boxWorld) {
+        super(width, height, boxWorld);
     }
 
-
-    public int getWidth() {
-        return width;
+    @Override
+    protected Body initBody() {
+        BodyDef bd = new BodyDef();
+        bd.type = BodyDef.BodyType.DynamicBody;
+        return boxWorld.createBody(bd);
     }
 
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public Vector2 getPosition() {
-        return position;
-    }
-
-    public void setPosition(Vector2 position) {
-        this.position = position;
+    @Override
+    protected Vector2 initOrigin() {
+        FixtureDef fd = new FixtureDef();
+        fd.density = 1;
+        fd.friction = 0.5f;
+        fd.restitution = 0.3f;
+        Utils.getBoxLoader().attachFixture(body, "satelite", fd, width);
+        return Utils.getBoxLoader().getOrigin("satelite", width).cpy();
     }
 }
