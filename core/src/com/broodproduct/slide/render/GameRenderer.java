@@ -33,10 +33,10 @@ public class GameRenderer {
 		batcher.begin();
         batcher.draw(AssetLoader.background, 0, 0);
         //ufo
-        batcher.draw(AssetLoader.ufo, world.getUfo().getBody().getPosition().x, world.getUfo().getBody().getPosition().y);
+        //batcher.draw(AssetLoader.ufo, world.getUfo().getBody().getPosition().x, world.getUfo().getBody().getPosition().y);
         //satellite
-        batcher.draw(AssetLoader.satellite, world.getSatellite().getBody().getPosition().x, world.getSatellite().getBody().getPosition().y,
-                world.getSatellite().getWidth(), world.getSatellite().getHeight());
+        //batcher.draw(AssetLoader.satellite, world.getSatellite().getBody().getPosition().x, world.getSatellite().getBody().getPosition().y,
+          //      world.getSatellite().getWidth(), world.getSatellite().getHeight());
         //left park
         batcher.draw(AssetLoader.leftPark, world.getLeftPark().getPosition().x, world.getLeftPark().getPosition().y);
         batcher.draw(AssetLoader.rightPark, world.getRightPark().getPosition().x, world.getRightPark().getPosition().y);
