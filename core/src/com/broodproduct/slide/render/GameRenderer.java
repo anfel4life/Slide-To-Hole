@@ -7,7 +7,10 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.broodproduct.slide.tool.AssetLoader;
+import com.broodproduct.slide.tool.KeyValue;
 
 
 public class GameRenderer {
@@ -16,6 +19,8 @@ public class GameRenderer {
 	private SpriteBatch batcher;
     private BitmapFont font;
     private GameWorld world;
+    private ShapeRenderer sr = new ShapeRenderer();
+
 
 	public GameRenderer(GameWorld world, float width, float height) {
 		this.world = world;
@@ -25,6 +30,7 @@ public class GameRenderer {
         batcher.setProjectionMatrix(cam.combined);
         font = new BitmapFont();
         font.setColor(Color.RED);
+
 	}
 
 	public void render(float delta, float runTime) {
@@ -40,9 +46,16 @@ public class GameRenderer {
         //left park
         batcher.draw(AssetLoader.leftPark, world.getLeftPark().getPosition().x, world.getLeftPark().getPosition().y);
         batcher.draw(AssetLoader.rightPark, world.getRightPark().getPosition().x, world.getRightPark().getPosition().y);
-
-		font.draw(batcher, "position: " + world.getUfo().getBody().getPosition(), 10, 520);
+        font.draw(batcher, "position: " + world.getUfo().getBody().getPosition(), 10, 520);
+        font.draw(batcher, "fps: " + Gdx.graphics.getFramesPerSecond(), 10, 500);
 		batcher.end();
+
+        sr.setProjectionMatrix(cam.combined);
+        sr.begin(ShapeRenderer.ShapeType.Line);
+        for (KeyValue<Vector2> ray : world.getRays()) {
+            sr.line(ray.getKey(), ray.getValue());
+        }
+        sr.end();
 
 	}
 
