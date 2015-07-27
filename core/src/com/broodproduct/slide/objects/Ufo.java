@@ -22,7 +22,7 @@ public class Ufo extends BaseModel {
 
     protected Body initBody() {
         BodyDef bd = new BodyDef();
-        bd.position.set(300, 200);
+        bd.position.set(400, 100);
         bd.type = BodyDef.BodyType.DynamicBody;
         return boxWorld.createBody(bd);
     }
@@ -46,7 +46,8 @@ public class Ufo extends BaseModel {
     }
 
     public void moveForward() {
-        this.body.applyForce(60000.0f, 0.0f, body.getPosition().x, body.getPosition().y, true);
+        this.body.applyLinearImpulse(6000.0f, 0.0f, body.getPosition().x, body.getPosition().y, true);
+
     }
 
     public void update(float delta) {

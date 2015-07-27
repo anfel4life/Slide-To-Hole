@@ -17,15 +17,14 @@ public class GameRenderer {
     private BitmapFont font;
     private GameWorld world;
 
-	public GameRenderer(GameWorld world) {
+	public GameRenderer(GameWorld world, float width, float height) {
 		this.world = world;
         cam = new OrthographicCamera();
-		cam.setToOrtho(true);
+		cam.setToOrtho(false, width, height);
 		batcher = new SpriteBatch();
+        batcher.setProjectionMatrix(cam.combined);
         font = new BitmapFont();
         font.setColor(Color.RED);
-//		batcher.setProjectionMatrix(cam.combined);
-
 	}
 
 	public void render(float delta, float runTime) {
@@ -46,6 +45,10 @@ public class GameRenderer {
 		batcher.end();
 
 	}
+
+    public OrthographicCamera getCam() {
+        return cam;
+    }
 
     public void dispose() {
         batcher.dispose();

@@ -1,7 +1,10 @@
 package com.broodproduct.slide.render;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 import com.broodproduct.slide.objects.Park;
 import com.broodproduct.slide.objects.Satellite;
 import com.broodproduct.slide.objects.Ufo;
@@ -12,7 +15,6 @@ public class GameWorld {
     private Park leftPark;
     private Park rightPark;
     private World boxWorld = new World(new Vector2(0, 0), true);
-    private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 
     public GameWorld(float width, float height) {
         this.ufo = new Ufo(0, 0, 100, 87, boxWorld);
@@ -64,5 +66,9 @@ public class GameWorld {
 
     public void dispose() {
         boxWorld.dispose();
+    }
+
+    public World getBoxWorld() {
+        return boxWorld;
     }
 }
