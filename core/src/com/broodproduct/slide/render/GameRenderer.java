@@ -46,7 +46,7 @@ public class GameRenderer {
         //left park
         batcher.draw(AssetLoader.leftPark, world.getLeftPark().getPosition().x, world.getLeftPark().getPosition().y);
         batcher.draw(AssetLoader.rightPark, world.getRightPark().getPosition().x, world.getRightPark().getPosition().y);
-        font.draw(batcher, "position: " + world.getUfo().getBody().getPosition(), 10, 520);
+        font.draw(batcher, "bomb position: " + world.getBomb().getPosition(), 10, 520);
         font.draw(batcher, "fps: " + Gdx.graphics.getFramesPerSecond(), 10, 500);
 		batcher.end();
 

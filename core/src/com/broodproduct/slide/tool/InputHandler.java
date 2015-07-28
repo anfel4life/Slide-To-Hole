@@ -1,5 +1,6 @@
 package com.broodproduct.slide.tool;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -100,6 +101,9 @@ public class InputHandler implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
+        if(Input.Keys.SPACE == keycode){
+            gameWorld.blastIt();
+        }
         return false;
     }
 

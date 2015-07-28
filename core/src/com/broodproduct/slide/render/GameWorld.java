@@ -47,17 +47,22 @@ public class GameWorld {
         groundBody = boxWorld.createBody(new BodyDef());
     }
 
-    private void ray(Vector2 center) {
-        int numRays = 1;
+    private Vector2 currentRay = null;
+
+    private void ray(final Vector2 center, final boolean blast) {
+        final int numRays = 12;
+        final float blastPower = 20000;
         rays.clear();
         RayCastCallback callback = new RayCastCallback() {
             @Override
             public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
-                rays.get(0).setValue(point);
-                return 0;
+                currentRay.set(point);
+                if(blast)
+                    applyBlastImpulse(fixture.getBody(), center, point, (blastPower / (float) numRays));
+                return fraction;
             }
         };
-        Vector2 blastRadius = new Vector2(100, 100);
+        Vector2 blastRadius = new Vector2(1000, 1000);
         for (int i = 0; i < numRays; i++) {
             float angle = (360 / numRays) * i;
             //from degrees to radians
@@ -65,20 +70,68 @@ public class GameWorld {
             float x = (float) Math.cos(angle);
             float y = (float) Math.sin(angle);
             Vector2 rayDir = new Vector2(x, y);
-            Vector2 rayEnd = new Vector2(center);
-            rayEnd.add(blastRadius).scl(rayDir);
+            Vector2 rayEnd = new Vector2(rayDir);
+            rayEnd.scl(blastRadius).add(center);
             rays.add(new KeyValue<Vector2>(center, rayEnd));
+            currentRay = rayEnd;
             boxWorld.rayCast(callback, center, rayEnd);
         }
+    }
+
+    private void particleExplose(final Vector2 center){
+        final int numRays = 4;
+        final float blastPower = 1000;
+        for (int i = 0; i < numRays; i++) {
+            float angle = (360 / numRays) * i;
+            //from degrees to radians
+            angle = (float) Math.toRadians(angle);
+            float x = (float) Math.cos(angle);
+            float y = (float) Math.sin(angle);
+            Vector2 rayDir = new Vector2(x, y);
+
+            BodyDef bd = new BodyDef();
+            bd.type = BodyDef.BodyType.DynamicBody;
+            bd.fixedRotation = true; // rotation not necessary
+            bd.bullet = true; // prevent tunneling at high speed
+//            bd.linearDamping = 0.001f; // drag due to moving through air
+            bd.gravityScale = 0; // ignore gravity
+            bd.position.set(center.cpy().add(100,100)); // start at blast center
+            bd.linearVelocity.set(rayDir.cpy().scl(blastPower));
+
+            Body body = boxWorld.createBody(bd);
+
+            CircleShape circleShape = new CircleShape();
+            circleShape.setRadius(1f); // very small
+
+            FixtureDef fd = new FixtureDef();
+            fd.shape = circleShape;
+            fd.density = 1f; // very high - shared across all particles
+            fd.friction = 0; // friction not necessary
+            fd.restitution = 0.99f; // high restitution to reflect off obstacles
+            fd.filter.groupIndex = -1; // particles should not collide with each other
+            body.createFixture(fd);
+        }
+    }
+
+    private void applyBlastImpulse(Body body, Vector2 blastCenter, Vector2 applyPoint, float blastPower) {
+        Vector2 blastDir = applyPoint.cpy().sub(blastCenter);
+        float distance = blastDir.cpy().nor().len();
+        //ignore bodies exactly at the blast point - blast direction is undefined
+        if (distance == 0)
+            return;
+        float invDistance = 1 / distance;
+        float impulseMag = blastPower * invDistance * invDistance;
+//        body.applyLinearImpulse(impulseMag * blastDir, applyPoint);
+        body.applyLinearImpulse(blastDir.scl(impulseMag), applyPoint, true);
     }
 
     private void createBomb() {
         BodyDef bd = new BodyDef();
         bd.position.set(300, 200);
-        bd.type = BodyDef.BodyType.DynamicBody;
+        bd.type = BodyDef.BodyType.StaticBody;
 
         CircleShape shape = new CircleShape();
-        shape.setRadius(20);
+        shape.setRadius(10);
 
         FixtureDef fd = new FixtureDef();
         fd.density = 0.4f;
@@ -87,7 +140,7 @@ public class GameWorld {
         fd.shape = shape;
 
         bomb = boxWorld.createBody(bd);
-        bomb.createFixture(fd);
+        bomb.createFixture(fd).setUserData("bomb");
 
         shape.dispose();
     }
@@ -105,8 +158,7 @@ public class GameWorld {
         fd.friction = 0.5f;
         fd.restitution = 0.5f;
         fd.shape = shape;
-
-        boxWorld.createBody(bd).createFixture(fd);
+        boxWorld.createBody(bd).createFixture(fd).setUserData("wall");
 
         shape.dispose();
     }
@@ -129,7 +181,7 @@ public class GameWorld {
 
     public void update(float delta) {
         boxWorld.step(1 / 60f, 10, 10);
-        ray(bomb.getWorldCenter());
+        ray(bomb.getWorldCenter(), false);
     }
 
     public Park getLeftPark() {
@@ -156,8 +208,8 @@ public class GameWorld {
         return bomb;
     }
 
-    public void blastIt(Vector2 center) {
-        ray(center);
+    public void blastIt() {
+        particleExplose(bomb.getWorldCenter());
     }
 
     public List<KeyValue<Vector2>> getRays() {

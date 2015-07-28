@@ -60,5 +60,4 @@ public class GameScreen implements Screen {
         world.dispose();
         renderer.dispose();
 	}
-
 }
