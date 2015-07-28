@@ -32,7 +32,7 @@ public class GameScreen implements Screen {
 		runTime += delta;
 		world.update(delta);
 		renderer.render(delta, runTime);
-        debug.render(world.getBoxWorld(), renderer.getCam().combined);
+        debug.render(world.getBoxWorld(), renderer.getDebugCam().combined);
 	}
 
 	@Override

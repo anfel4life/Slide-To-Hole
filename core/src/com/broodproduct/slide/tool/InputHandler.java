@@ -56,10 +56,10 @@ public class InputHandler implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        screenX = scaleX(screenX);
-        screenY = scaleY(screenY);
+        float x = scaleX(screenX);
+        float y = scaleY(screenY);
         // translate the mouse coordinates to world coordinates
-        gameRenderer.getCam().unproject(initiatorPoint.set(screenX, screenY, 0));
+        gameRenderer.getCam().unproject(initiatorPoint.set(x, y, 0));
         // ask the world which bodies are within the given
         // bounding box around the mouse pointer
         hitBody = null;
@@ -139,12 +139,12 @@ public class InputHandler implements InputProcessor {
         return false;
     }
 
-    private int scaleX(int screenX) {
-        return (int) (screenX / scaleFactorX);
+    private float scaleX(int screenX) {
+        return Constants.scale(screenX / scaleFactorX);
     }
 
-    private int scaleY(int screenY) {
-        return (int) (screenY / scaleFactorY);
+    private float scaleY(int screenY) {
+        return Constants.scale(screenY / scaleFactorY);
     }
 
 }

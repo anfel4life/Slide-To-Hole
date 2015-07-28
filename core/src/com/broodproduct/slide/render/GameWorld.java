@@ -11,9 +11,11 @@ import com.broodproduct.slide.tool.KeyValue;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.broodproduct.slide.tool.Constants.scale;
+
 public class GameWorld {
-    private final float width;
-    private final float height;
+    public final float unitWidth; //60 meters
+    public final float unitHeight; //33.75 meters
     private Ufo ufo;
     private Body bomb;
     private Satellite satellite;
@@ -24,20 +26,20 @@ public class GameWorld {
     private List<KeyValue<Vector2>> rays = new ArrayList<KeyValue<Vector2>>();
 
     public GameWorld(float width, float height) {
-        this.width = width;
-        this.height = height;
+        unitWidth = scale(width);
+        unitHeight = scale(height);
         this.ufo = new Ufo(0, 0, 100, 87, boxWorld);
-        this.satellite = new Satellite(100, 50, 152, 60, boxWorld);
+        this.satellite = new Satellite(200, 300, 152, 60, boxWorld);
         this.leftPark = new Park(0, 0, 116, 540);
         this.rightPark = new Park((int) (width - 116), 0, 116, 540);
         //ground
-        createWall(0, 0, width, 1);
+        createWall(0, 0, unitWidth, 1);
         //flor
-        createWall(0, height, width, 1);
+        createWall(0, unitHeight, unitWidth, 1);
         //left
-        createWall(0, 0, 1, height);
+        createWall(0, 0, 1, unitHeight);
         //right
-        createWall(width, 0, 1, height);
+        createWall(unitWidth, 0, 1, unitHeight);
         //createJoint();
 
         createBomb();
@@ -80,7 +82,7 @@ public class GameWorld {
 
     private void particleExplose(final Vector2 center){
         final int numRays = 4;
-        final float blastPower = 1000;
+        final float blastPower = 100;
         for (int i = 0; i < numRays; i++) {
             float angle = (360 / numRays) * i;
             //from degrees to radians
@@ -101,7 +103,7 @@ public class GameWorld {
             Body body = boxWorld.createBody(bd);
 
             CircleShape circleShape = new CircleShape();
-            circleShape.setRadius(1f); // very small
+            circleShape.setRadius(0.2f); // very small
 
             FixtureDef fd = new FixtureDef();
             fd.shape = circleShape;
@@ -127,11 +129,11 @@ public class GameWorld {
 
     private void createBomb() {
         BodyDef bd = new BodyDef();
-        bd.position.set(300, 200);
+        bd.position.set(scale(300), scale(200));
         bd.type = BodyDef.BodyType.StaticBody;
 
         CircleShape shape = new CircleShape();
-        shape.setRadius(10);
+        shape.setRadius(1f);
 
         FixtureDef fd = new FixtureDef();
         fd.density = 0.4f;
