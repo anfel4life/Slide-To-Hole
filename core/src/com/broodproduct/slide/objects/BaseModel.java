@@ -24,6 +24,7 @@ public abstract class BaseModel {
     protected List<Body> brokenParts;
     protected boolean needBlastFlag;
     protected float hitPoints;
+    private float blastDmg;
 
     public BaseModel(float x, float y, float width, float height, World boxWorld) {
         this.width = width;
@@ -58,8 +59,9 @@ public abstract class BaseModel {
         return height;
     }
 
-    public void needBlast(){
+    public void needBlast(float blastDmg){
         this.needBlastFlag = true;
+        this.blastDmg = blastDmg;
     }
 
     protected void blast() {

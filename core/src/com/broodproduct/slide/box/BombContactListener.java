@@ -7,6 +7,8 @@ import com.broodproduct.slide.objects.BaseModel;
 
 public class BombContactListener implements ContactListener {
 
+    private BaseModel modelToBlast = null;
+
     @Override
     public void beginContact(Contact contact) {
         Body bodyA = contact.getFixtureA().getBody();
@@ -18,16 +20,15 @@ public class BombContactListener implements ContactListener {
             //let it be p = m * v
             Vector2 velocity1 = bodyA.getLinearVelocity();
             Vector2 velocity2 = bodyB.getLinearVelocity();
-            WorldManifold worldManifold = contact.getWorldManifold();
-            velocity1.cpy();
+            Vector2 dmg = velocity1.cpy().scl(-1f).add(velocity2);
+            float totalDmg =  (Math.abs(dmg.x) + Math.abs(dmg.y));
+            modelToBlast.needBlast(totalDmg);
         }
-
     }
 
     private boolean checkAndBlast(Object obj) {
         if(obj != null && obj instanceof BaseModel){
-            BaseModel gameObj = (BaseModel)obj;
-            gameObj.needBlast();
+            modelToBlast = (BaseModel)obj;
             return true;
         }
         return false;
