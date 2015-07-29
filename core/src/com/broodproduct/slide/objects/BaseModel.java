@@ -24,7 +24,9 @@ public abstract class BaseModel {
     protected List<Body> brokenParts;
     protected boolean needBlastFlag;
     protected float hitPoints;
-    private float blastDmg;
+    protected float blastDmg;
+    protected float minBlastDmg;
+
 
     public BaseModel(float x, float y, float width, float height, World boxWorld) {
         this.width = width;
@@ -36,7 +38,8 @@ public abstract class BaseModel {
         this.body = initBody();
         this.origin = initOrigin();
         this.body.setUserData(this);
-        this.hitPoints = 10;
+        this.hitPoints = 100;
+        this.minBlastDmg = 40;
     }
 
     protected abstract Body initBody();
@@ -59,35 +62,40 @@ public abstract class BaseModel {
         return height;
     }
 
-    public void needBlast(float blastDmg){
-        this.needBlastFlag = true;
-        this.blastDmg = blastDmg;
+    public void needBlast(float blastDmg) {
+        if(blastDmg >= minBlastDmg) {
+            this.needBlastFlag = true;
+            this.blastDmg = blastDmg;
+        }
     }
 
     protected void blast() {
-        Array<Fixture> fixtureList = body.getFixtureList();
-        int size = fixtureList.size;
-        float angle = (float) Math.toRadians(360 / size);
-        for(int i = 0; i < size; i++){
-            BodyDef bd = new BodyDef();
-            float x = body.getPosition().x;
-            float y = body.getPosition().y;
-            bd.position.set(x, y);
-            bd.type = BodyDef.BodyType.DynamicBody;
-            Body partBody = boxWorld.createBody(bd);
+        this.hitPoints -= blastDmg;
+        if (hitPoints < 0) {
+            Array<Fixture> fixtureList = body.getFixtureList();
+            int size = fixtureList.size;
+            float angle = (float) Math.toRadians(360 / size);
+            for (int i = 0; i < size; i++) {
+                BodyDef bd = new BodyDef();
+                float x = body.getPosition().x;
+                float y = body.getPosition().y;
+                bd.position.set(x, y);
+                bd.type = BodyDef.BodyType.DynamicBody;
+                Body partBody = boxWorld.createBody(bd);
 
-            Fixture fixture1 = fixtureList.first();
-            partBody.createFixture(fixture1.getShape(), fixture1.getDensity());
+                Fixture fixture1 = fixtureList.first();
+                partBody.createFixture(fixture1.getShape(), fixture1.getDensity());
 
-            float xPart = (float) Math.cos(angle*i);
-            float yPart = (float) Math.sin(angle * i);
-            int splitPower = 10;
-            Vector2 velocity = new Vector2(xPart, yPart).scl(splitPower);
+                float xPart = (float) Math.cos(angle * i);
+                float yPart = (float) Math.sin(angle * i);
+                int splitPower = 10;
+                Vector2 velocity = new Vector2(xPart, yPart).scl(splitPower);
 
-            body.destroyFixture(fixture1);
+                body.destroyFixture(fixture1);
 //            body.setLinearVelocity(velocity);
 
-            brokenParts.add(partBody);
+                brokenParts.add(partBody);
+            }
         }
     }
 
@@ -100,12 +108,17 @@ public abstract class BaseModel {
         this.body = initBody();
         this.origin = initOrigin();
         this.body.setUserData(this);
+        this.hitPoints = 100;
     }
 
     public void update() {
-        if(needBlastFlag) {
+        if (needBlastFlag) {
             this.blast();
             this.needBlastFlag = false;
         }
+    }
+
+    public float getHitPoints() {
+        return hitPoints;
     }
 }

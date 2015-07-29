@@ -112,6 +112,10 @@ public class InputHandler implements InputProcessor {
             gameWorld.blastIt();
         }else if (Input.Keys.ENTER == keycode) {
             gameWorld.restore();
+        }else if (Input.Keys.R == keycode) {
+            gameWorld.getDestroyer().rotate(true);
+        }else if (Input.Keys.E == keycode) {
+            gameWorld.getDestroyer().rotate(false);
         }
         return false;
     }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 import com.badlogic.gdx.utils.Array;
+import com.broodproduct.slide.objects.Destroyer;
 import com.broodproduct.slide.objects.Park;
 import com.broodproduct.slide.objects.Satellite;
 import com.broodproduct.slide.objects.Ufo;
@@ -19,6 +20,7 @@ import java.util.Random;
 public class GameWorld {
     public final float unitWidth; //60 meters
     public final float unitHeight; //33.75 meters
+    private Destroyer destroyer;
     private Ufo ufo;
     private Body bomb;
     private Satellite satellite;
@@ -39,19 +41,24 @@ public class GameWorld {
         this.satellite = new Satellite(200, 300, 152, 60, boxWorld);
         this.leftPark = new Park(0, 0, 116, 540);
         this.rightPark = new Park((int) (width - 116), 0, 116, 540);
+        this.destroyer = new Destroyer(1,1,22,22,boxWorld);
         //ground
-        createWall(0, 0, unitWidth, 1);
+        createWall(0, 0, unitWidth, 0.2f);
         //flor
-        createWall(0, unitHeight, unitWidth, 1);
+        createWall(0, unitHeight, unitWidth, 0.2f);
         //left
-        createWall(0, 0, 1, unitHeight);
+        createWall(0, 0, 0.2f, unitHeight);
+
+//        createWall(10, 20, 0.2f, 7);
         //right
-        createWall(unitWidth, 0, 1, unitHeight);
+        createWall(unitWidth, 0, 0.2f, unitHeight);
+
+//        createWall(unitWidth-10, 20, 0.2f, 7);
         //createJoint();
 
         createBomb();
 
-        createTrash();
+        //createTrash();
 
         boxWorld.setContactListener(new BombContactListener());
 
@@ -307,5 +314,9 @@ public class GameWorld {
     public void restore() {
         ufo.restore();
         satellite.restore();
+    }
+
+    public Destroyer getDestroyer() {
+        return destroyer;
     }
 }
