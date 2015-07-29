@@ -9,14 +9,13 @@ import com.broodproduct.slide.tool.Constants;
 import com.broodproduct.slide.tool.Utils;
 
 public class Ufo extends BaseModel {
-
     public Ufo(int x, int y, int width, int height, World boxWorld) {
-        super(width, height, boxWorld);
+        super(x, y, width, height, boxWorld);
     }
 
     protected Body initBody() {
         BodyDef bd = new BodyDef();
-        bd.position.set(Constants.scale(400), Constants.scale(100));
+        bd.position.set(Constants.scaleToUnit(origX), Constants.scaleToUnit(origY));
         bd.type = BodyDef.BodyType.DynamicBody;
         return boxWorld.createBody(bd);
     }
@@ -27,16 +26,7 @@ public class Ufo extends BaseModel {
         fd.friction = 0.4f;
         fd.restitution = 0.3f;
 
-        Utils.getBoxLoader().attachFixture(body, "Ufo", fd, Constants.scale(width));
-        return Utils.getBoxLoader().getOrigin("Ufo", Constants.scale(width)).cpy();
-    }
-
-    public void moveForward() {
-        this.body.applyLinearImpulse(6000.0f, 0.0f, body.getPosition().x, body.getPosition().y, true);
-
-    }
-
-    public void update(float delta) {
-
+        Utils.getBoxLoader().attachFixture(body, "Ufo", fd, Constants.scaleToUnit(width));
+        return Utils.getBoxLoader().getOrigin("Ufo", Constants.scaleToUnit(width)).cpy();
     }
 }

@@ -1,5 +1,6 @@
 package com.broodproduct.slide.tool;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
@@ -22,6 +23,10 @@ public class InputHandler implements InputProcessor {
     private float scaleFactorX;
     private float scaleFactorY;
     private MouseJoint mouseJoint = null;
+
+    //hack to process with UNIT HEIGHT rather than SCREEN HEIGHT
+    final float shiftY;
+
     /**
      * another temporary vector
      **/
@@ -35,6 +40,7 @@ public class InputHandler implements InputProcessor {
         this.ufo = gameWorld.getUfo();
         this.scaleFactorX = scaleFactorX;
         this.scaleFactorY = scaleFactorY;
+        shiftY = Gdx.graphics.getHeight() - gameWorld.unitHeight - 1;
     }
 
     /**
@@ -56,10 +62,11 @@ public class InputHandler implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        //box2d and libgdx have opposite Y scaleToUnit
         float x = scaleX(screenX);
         float y = scaleY(screenY);
         // translate the mouse coordinates to world coordinates
-        gameRenderer.getCam().unproject(initiatorPoint.set(x, y, 0));
+        gameRenderer.getDebugCam().unproject(initiatorPoint.set(x, y, 0), 0, shiftY, gameWorld.unitWidth, gameWorld.unitHeight);
         // ask the world which bodies are within the given
         // bounding box around the mouse pointer
         hitBody = null;
@@ -101,8 +108,10 @@ public class InputHandler implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        if(Input.Keys.SPACE == keycode){
+        if (Input.Keys.SPACE == keycode) {
             gameWorld.blastIt();
+        }else if (Input.Keys.ENTER == keycode) {
+            gameWorld.restore();
         }
         return false;
     }
@@ -123,7 +132,7 @@ public class InputHandler implements InputProcessor {
         // the target of the joint based on the new
         // mouse coordinates
         if (mouseJoint != null) {
-            gameRenderer.getCam().unproject(initiatorPoint.set(x, y, 0));
+            gameRenderer.getDebugCam().unproject(initiatorPoint.set(x, y, 0));
             mouseJoint.setTarget(target.set(initiatorPoint.x, initiatorPoint.y));
         }
         return false;
@@ -140,11 +149,11 @@ public class InputHandler implements InputProcessor {
     }
 
     private float scaleX(int screenX) {
-        return Constants.scale(screenX / scaleFactorX);
+        return Constants.scaleToUnit(screenX / scaleFactorX);
     }
 
     private float scaleY(int screenY) {
-        return Constants.scale(screenY / scaleFactorY);
+        return Constants.scaleToUnit(screenY / scaleFactorY);
     }
 
 }

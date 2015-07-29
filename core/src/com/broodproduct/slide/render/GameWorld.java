@@ -3,15 +3,18 @@ package com.broodproduct.slide.render;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
+import com.badlogic.gdx.utils.Array;
 import com.broodproduct.slide.objects.Park;
 import com.broodproduct.slide.objects.Satellite;
 import com.broodproduct.slide.objects.Ufo;
+import com.broodproduct.slide.box.BombContactListener;
+import com.broodproduct.slide.tool.Constants;
 import com.broodproduct.slide.tool.KeyValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-import static com.broodproduct.slide.tool.Constants.scale;
 
 public class GameWorld {
     public final float unitWidth; //60 meters
@@ -23,12 +26,16 @@ public class GameWorld {
     private Park rightPark;
     private World boxWorld = new World(new Vector2(0, 0), true);
     private Body groundBody;
+    private List<Body> particles = new ArrayList<Body>();
+    private List<Body> trash = new ArrayList<Body>();
     private List<KeyValue<Vector2>> rays = new ArrayList<KeyValue<Vector2>>();
+    private Random r = new Random();
+    private List<Body> ufoParts = new ArrayList<Body>();
 
     public GameWorld(float width, float height) {
-        unitWidth = scale(width);
-        unitHeight = scale(height);
-        this.ufo = new Ufo(0, 0, 100, 87, boxWorld);
+        unitWidth = Constants.scaleToUnit(width);
+        unitHeight = Constants.scaleToUnit(height);
+        this.ufo = new Ufo(100, 100, 100, 87, boxWorld);
         this.satellite = new Satellite(200, 300, 152, 60, boxWorld);
         this.leftPark = new Park(0, 0, 116, 540);
         this.rightPark = new Park((int) (width - 116), 0, 116, 540);
@@ -43,6 +50,10 @@ public class GameWorld {
         //createJoint();
 
         createBomb();
+
+        createTrash();
+
+        boxWorld.setContactListener(new BombContactListener());
 
         // we also need an invisible zero size ground body
         // to which we can connect the mouse joint
@@ -59,7 +70,7 @@ public class GameWorld {
             @Override
             public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
                 currentRay.set(point);
-                if(blast)
+                if (blast)
                     applyBlastImpulse(fixture.getBody(), center, point, (blastPower / (float) numRays));
                 return fraction;
             }
@@ -80,9 +91,13 @@ public class GameWorld {
         }
     }
 
-    private void particleExplose(final Vector2 center){
-        final int numRays = 4;
-        final float blastPower = 100;
+    private void particleExplose() {
+        for (Body particle : particles) {
+            boxWorld.destroyBody(particle);
+        }
+        particles.clear();
+        final int numRays = 100;
+        final float blastPower = 2000;
         for (int i = 0; i < numRays; i++) {
             float angle = (360 / numRays) * i;
             //from degrees to radians
@@ -95,23 +110,26 @@ public class GameWorld {
             bd.type = BodyDef.BodyType.DynamicBody;
             bd.fixedRotation = true; // rotation not necessary
             bd.bullet = true; // prevent tunneling at high speed
-//            bd.linearDamping = 0.001f; // drag due to moving through air
+            bd.linearDamping = 7f; // drag due to moving through air
             bd.gravityScale = 0; // ignore gravity
-            bd.position.set(center.cpy().add(100,100)); // start at blast center
+            bd.position.set(20, 20); // start at blast center
             bd.linearVelocity.set(rayDir.cpy().scl(blastPower));
 
             Body body = boxWorld.createBody(bd);
 
             CircleShape circleShape = new CircleShape();
-            circleShape.setRadius(0.2f); // very small
+            circleShape.setRadius(0.02f); // very small
 
             FixtureDef fd = new FixtureDef();
             fd.shape = circleShape;
-            fd.density = 1f; // very high - shared across all particles
+            fd.density = 60f; // very high - shared across all particles
             fd.friction = 0; // friction not necessary
             fd.restitution = 0.99f; // high restitution to reflect off obstacles
             fd.filter.groupIndex = -1; // particles should not collide with each other
             body.createFixture(fd);
+            body.setUserData("splinter");
+            circleShape.dispose();
+            particles.add(body);
         }
     }
 
@@ -129,7 +147,7 @@ public class GameWorld {
 
     private void createBomb() {
         BodyDef bd = new BodyDef();
-        bd.position.set(scale(300), scale(200));
+        bd.position.set(Constants.scaleToUnit(300), Constants.scaleToUnit(200)); //18.75 : 12.5
         bd.type = BodyDef.BodyType.StaticBody;
 
         CircleShape shape = new CircleShape();
@@ -165,6 +183,72 @@ public class GameWorld {
         shape.dispose();
     }
 
+    private void createTrash() {
+        int items = 1;
+
+        for (int i = 0; i < items; i++) {
+            BodyDef bd = new BodyDef();
+            float x = unitWidth * r.nextFloat();
+            float y = unitHeight * r.nextFloat();
+            float radius = 2 * r.nextFloat();
+            bd.position.set(x, y);
+            bd.type = BodyDef.BodyType.DynamicBody;
+
+            Shape shape = getShape(radius, r.nextFloat() > 0.5f);
+
+            FixtureDef fd = new FixtureDef();
+            fd.density = 0.4f;
+            fd.friction = 0.5f;
+            fd.restitution = 0.5f;
+            fd.shape = shape;
+
+            Body body = boxWorld.createBody(bd);
+            body.createFixture(fd).setUserData("Trash " + i);
+            shape.dispose();
+            trash.add(body);
+        }
+    }
+
+    private void splitUfo() {
+        Array<Fixture> fixtureList = ufo.getBody().getFixtureList();
+        int size = fixtureList.size;
+        float angle = (float) Math.toRadians(360 / size);
+        for (int i = 0; i < size; i++) {
+            BodyDef bd = new BodyDef();
+            float x = ufo.getBody().getPosition().x;
+            float y = ufo.getBody().getPosition().y;
+            bd.position.set(x, y);
+            bd.type = BodyDef.BodyType.DynamicBody;
+            Body body = boxWorld.createBody(bd);
+
+            Fixture fixture1 = fixtureList.first();
+            body.createFixture(fixture1.getShape(), fixture1.getDensity());
+
+            float xPart = (float) Math.cos(angle * i);
+            float yPart = (float) Math.sin(angle * i);
+            int splitPower = 10;
+            Vector2 velocity = new Vector2(xPart, yPart).scl(splitPower);
+
+            ufo.getBody().destroyFixture(fixture1);
+//            body.setLinearVelocity(velocity);
+
+            Body part = boxWorld.createBody(bd);
+            ufoParts.add(part);
+        }
+    }
+
+    private Shape getShape(float radius, boolean isCube) {
+        if (isCube) {
+            PolygonShape shape = new PolygonShape();
+            shape.setAsBox(radius, radius);
+            return shape;
+        } else {
+            CircleShape shape = new CircleShape();
+            shape.setRadius(radius);
+            return shape;
+        }
+    }
+
     private void createJoint() {
         RopeJointDef ropeJointDef = new RopeJointDef();
         ropeJointDef.bodyA = ufo.getBody();
@@ -183,7 +267,9 @@ public class GameWorld {
 
     public void update(float delta) {
         boxWorld.step(1 / 60f, 10, 10);
-        ray(bomb.getWorldCenter(), false);
+        //ray(bomb.getWorldCenter(), false);
+        this.ufo.update();
+        this.satellite.update();
     }
 
     public Park getLeftPark() {
@@ -211,10 +297,15 @@ public class GameWorld {
     }
 
     public void blastIt() {
-        particleExplose(bomb.getWorldCenter());
+        particleExplose();
     }
 
     public List<KeyValue<Vector2>> getRays() {
         return rays;
+    }
+
+    public void restore() {
+        ufo.restore();
+        satellite.restore();
     }
 }
