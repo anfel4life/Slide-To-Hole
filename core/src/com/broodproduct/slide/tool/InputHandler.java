@@ -108,14 +108,25 @@ public class InputHandler implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (Input.Keys.SPACE == keycode) {
-            gameWorld.blastIt();
-        }else if (Input.Keys.ENTER == keycode) {
-            gameWorld.restore();
-        }else if (Input.Keys.R == keycode) {
-            gameWorld.getDestroyer().rotate(true);
-        }else if (Input.Keys.E == keycode) {
-            gameWorld.getDestroyer().rotate(false);
+        switch (keycode){
+            case Input.Keys.SPACE:
+                gameWorld.blastIt();
+                break;
+            case Input.Keys.ENTER:
+                gameWorld.restore();
+                break;
+            case Input.Keys.R:
+                gameWorld.getDestroyer().rotate(true);
+                break;
+            case Input.Keys.E:
+                gameWorld.getDestroyer().rotate(false);
+                break;
+            case Input.Keys.C:
+                gameWorld.getDestroyer().switchSide(true);
+                break;
+            case Input.Keys.X:
+                gameWorld.getDestroyer().switchSide(false);
+                break;
         }
         return false;
     }

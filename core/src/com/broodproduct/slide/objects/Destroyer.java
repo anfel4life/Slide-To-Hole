@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.*;
 public class Destroyer extends BaseModel {
     public Destroyer(float x, float y, float width, float height, World boxWorld) {
         super(x, y, width, height, boxWorld);
+//        this.body.setFixedRotation(true);
         minBlastDmg = 10000;
     }
 
@@ -49,7 +50,8 @@ public class Destroyer extends BaseModel {
         this.body.applyAngularImpulse(val, true);
     }
 
-    public void switchSide(){
-
+    public void switchSide(boolean forward){
+        int x = forward ? 50 : -50;
+        this.body.applyLinearImpulse(new Vector2(x, 0), body.getWorldCenter(), true);
     }
 }

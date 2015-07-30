@@ -3,7 +3,7 @@ package com.broodproduct.slide.client;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
-import com.broodproduct.slide.SlideToHole;
+import com.broodproduct.slide.SlideGame;
 
 public class HtmlLauncher extends GwtApplication {
 
@@ -14,6 +14,6 @@ public class HtmlLauncher extends GwtApplication {
 
         @Override
         public ApplicationListener getApplicationListener () {
-                return new SlideToHole();
+                return new SlideGame();
         }
 }
